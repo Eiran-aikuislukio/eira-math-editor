@@ -1,0 +1,84 @@
+html,
+body {
+  height: 100%;
+  background-color: #edf9ff;
+  font-family: noto sans tc, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+ul {
+  margin-top: 0;
+}
+
+.editor-info {
+  padding: 0 0 15px;
+}
+
+.instructions {
+  display: flex;
+  font-size: 14px;
+}
+
+.keys {
+  text-align: left;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.tips {
+  padding-right: 30px;
+}
+
+.editor {
+  display: flex;
+  height: 100%;
+  padding: 0;
+  flex-direction: column;
+}
+
+.answer {
+  padding: 5px;
+  flex: 1;
+  font: 17px times new roman;
+  background-color: #fff;
+  position: relative;
+}
+
+.rich-text-editor img[src^='data:image/svg+xml'] {
+  vertical-align: middle;
+  margin: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.rich-text-editor.rich-text-focused img[src^='data:image/svg+xml'],
+.rich-text-editor:focus img[src^='data:image/svg+xml'] {
+  background: #edf9ff;
+  border: 1px solid #e6f2f8;
+}
+
+.rich-text-editor img[src*='data:image/png'] {
+  margin: 4px;
+}
+
+.rich-text-editor:focus img[src*='data:image/png'],
+.rich-text-editor.rich-text-focused img[src*='data:image/png'] {
+  box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.2);
+}
+
+.result {
+  display: none;
+}
+
+a {
+  color: #2fa3cf;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #2680a3;
+}
