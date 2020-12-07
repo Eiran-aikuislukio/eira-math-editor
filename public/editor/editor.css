@@ -1,7 +1,7 @@
 html,
 body {
   height: 100%;
-  background-color: #edf9ff;
+  background-color: #2a69ac;
   font-family: noto sans tc, sans-serif;
 }
 
@@ -34,9 +34,12 @@ ul {
 
 .editor {
   display: flex;
-  height: 100%;
   padding: 0;
   flex-direction: column;
+
+  /* Space for the toolbar */
+  height: calc(100% - 136px);
+  padding: 120px 16px 16px;
 }
 
 .answer {

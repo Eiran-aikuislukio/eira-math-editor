@@ -8,7 +8,7 @@ const colors = {
     600: '#3A82CF',
   },
 
-  black: '#000',
+  black: 'rgb(29, 29, 29)',
 
   white: '#fff',
 
