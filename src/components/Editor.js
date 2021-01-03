@@ -1,7 +1,6 @@
 /*global MathJax, makeRichText*/
 
 import React, { useEffect, useRef } from 'react'
-import PropTypes from 'prop-types'
 import styled from '@emotion/styled'
 import useAnswersStore from '../store/answers'
 import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
@@ -186,12 +185,16 @@ const initRichTextEditor = (answerNode, resultNode) => {
   }
 }
 
-const Editor = ({ answer, selectedAnswerId }) => {
+const Editor = () => {
+  const answers = useAnswersStore((state) => state.answers)
+  const selectedAnswerId = useAnswersStore((state) => state.selectedAnswerId)
   const updateAnswer = useAnswersStore((state) => state.updateAnswer)
 
   const answerRef = useRef()
   const resultRef = useRef()
   const previousSelectedAnswerId = useRef(null)
+
+  const answer = answers.find(({ id }) => id === selectedAnswerId)
 
   useEffect(() => {
     if (previousSelectedAnswerId.current === selectedAnswerId) {
@@ -235,11 +238,6 @@ const Editor = ({ answer, selectedAnswerId }) => {
       <Result ref={resultRef}>{'\\({}\\)'}</Result>
     </Container>
   )
-}
-
-Editor.propTypes = {
-  answer: PropTypes.shape().isRequired,
-  selectedAnswerId: PropTypes.string.isRequired,
 }
 
 export default Editor
