@@ -14,8 +14,8 @@ import Shortcuts from './Shortcuts'
 import AnswersList from './AnswersList'
 
 const StyledLogo = styled(EiraLogo)`
+  height: 100%;
   max-width: 100%;
-  max-height: 100%;
 `
 
 const StyledImg = styled.img`
