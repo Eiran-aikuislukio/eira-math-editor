@@ -42,13 +42,13 @@ const Layout = () => {
           null,
           `'header header' 'sidebar editor' 'footer editor'`,
         ]}
-        templateColumns={['1fr', null, '200px auto', '300px auto']}
+        templateColumns={['1fr', null, '300px auto', '350px auto']}
         templateRows="max-content auto 150px"
       >
         <GridItem
           gridArea="header"
           as="header"
-          bg="brand.900"
+          bg="gray.600"
           p={4}
           display="flex"
           justifyContent="space-between"
@@ -61,7 +61,7 @@ const Layout = () => {
         <GridItem
           display={['none', null, 'flex']}
           gridArea="sidebar"
-          bg="brand.800"
+          bg="gray.500"
           p={3}
           alignItems="stretch"
           flexDirection="column"
@@ -81,16 +81,17 @@ const Layout = () => {
 
         <GridItem
           display="flex"
-          alignItems="stretch"
-          justifyContent="stretch"
+          flexDirection="column"
           gridArea="editor"
-          bg="brand.700"
+          bg="gray.400"
           width="100%"
+          overflowY="auto"
+          p={4}
         >
           <Editor />
         </GridItem>
 
-        <GridItem gridArea="footer" bg="brand.900" p={4} alignItems="center">
+        <GridItem gridArea="footer" bg="gray.600" p={4} alignItems="center">
           <StyledImg src={ophLogo} alt="Opetushallitus rahoittaa hanketta" />
         </GridItem>
       </Grid>
