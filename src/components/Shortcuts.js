@@ -16,7 +16,12 @@ const Plus = () => (
 )
 
 const Shortcuts = () => (
-  <SimpleGrid columns={2} spacing={8} alignItems="flex-start">
+  <SimpleGrid
+    display={['none', null, 'flex']}
+    columns={2}
+    spacing={8}
+    alignItems="flex-start"
+  >
     <SimpleGrid
       templateColumns="repeat(2, max-content)"
       spacingX={4}
