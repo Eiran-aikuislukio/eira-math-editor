@@ -1,27 +1,21 @@
-/*global MathJax, makeRichText*/
+/* global MathJax, makeRichText */
+/* eslint-disable no-control-regex */
 
-import React, { useEffect, useRef } from 'react'
+import React, { forwardRef, useEffect, useRef } from 'react'
+import debounce from 'lodash/debounce'
 import styled from '@emotion/styled'
 import useAnswersStore from '../store/answers'
-import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
+import { Box, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
 import t from '../i18n'
 import { EditIcon } from '@chakra-ui/icons'
 
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  min-height: 400px;
-  display: flex;
-  padding: 0;
-  flex-direction: column;
+const EditorBox = forwardRef((props, ref) => (
+  <Box ref={ref} textStyle="editor" {...props} />
+))
 
-  padding: 16px;
-`
-
-const Answer = styled.div`
-  padding: 5px;
+export const Answer = styled(EditorBox)`
+  padding: 20px;
   flex: 1;
-  font: 17px times new roman;
   background-color: #fff;
   position: relative;
 
@@ -138,12 +132,12 @@ const transformMath = (math, callback, svgNodes) => {
   }
 }
 
-const onUpdateAnswer = (answer) => {
+const onUpdateAnswer = debounce((answer) => {
   const selectedAnswerId = useAnswersStore.getState().selectedAnswerId
   const updateAnswer = useAnswersStore.getState().updateAnswer
 
   updateAnswer(selectedAnswerId, answer)
-}
+}, 200)
 
 const initRichTextEditor = (answerNode, resultNode) => {
   makeRichText(
@@ -216,7 +210,7 @@ const Editor = () => {
     updateAnswer(selectedAnswerId, { title: event.target.value })
 
   return (
-    <Container>
+    <>
       <InputGroup mb={5}>
         <InputLeftElement
           top="calc(50% - 1.25rem)"
@@ -224,19 +218,20 @@ const Editor = () => {
           children={<EditIcon color="gray.300" />}
         />
         <Input
+          key={answer.title}
           fontSize={40}
           fontWeight="bold"
-          value={answer.title || ''}
-          onChange={handleChangeTitle}
+          defaultValue={answer.title || ''}
+          onBlur={handleChangeTitle}
           variant="unstyled"
           placeholder={t('TITLE')}
         />
       </InputGroup>
 
-      <Answer className="answer" id="answer" ref={answerRef} />
+      <Answer ref={answerRef} />
       {/* Render \({}\) to inform MathJax where to render the result*/}
       <Result ref={resultRef}>{'\\({}\\)'}</Result>
-    </Container>
+    </>
   )
 }
 
