@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { DeleteIcon, DownloadIcon } from '@chakra-ui/icons'
-import { saveAs } from 'file-saver'
 import {
   Box,
   Button,
@@ -25,6 +24,7 @@ import {
 import { motion } from 'framer-motion'
 
 import t from '../i18n'
+import { handleDownload, TYPE } from '../utils/download'
 
 const formatDate = (timestamp) =>
   new Date(timestamp).toLocaleDateString('fi', {
@@ -32,7 +32,7 @@ const formatDate = (timestamp) =>
     minute: '2-digit',
   })
 
-const DownloadButton = ({ onDownloadFile }) => (
+const DownloadButton = ({ onDownload }) => (
   <Menu>
     <MenuButton
       as={IconButton}
@@ -42,75 +42,71 @@ const DownloadButton = ({ onDownloadFile }) => (
       borderRadius="200px"
     />
     <MenuList>
-      <MenuItem onClick={onDownloadFile}>Download file</MenuItem>
-      <MenuItem onClick={() => console.log('IMAGE')}>Save image</MenuItem>
-      <MenuItem onClick={() => console.log('PDF')}>Save PDF</MenuItem>
+      <MenuItem onClick={() => onDownload(TYPE.FILE)}>
+        {t('DOWNLOAD_FILE')}
+      </MenuItem>
+      <MenuItem onClick={() => onDownload(TYPE.IMAGE)}>
+        {t('SAVE_IMAGE')}
+      </MenuItem>
+      <MenuItem onClick={() => onDownload(TYPE.PDF)}>{t('SAVE_PDF')}</MenuItem>
     </MenuList>
   </Menu>
 )
 
-const DeleteButton = ({ onDelete }) => (
-  <Popover>
-    {({ onClose }) => (
-      <>
-        <PopoverTrigger>
-          <IconButton
-            title={t('DELETE')}
-            aria-label={t('DELETE')}
-            icon={<DeleteIcon />}
-            borderRadius="200px"
-          />
-        </PopoverTrigger>
-        <PopoverContent>
-          <PopoverArrow />
-          <PopoverCloseButton />
-          <PopoverHeader>
-            <Heading as="h4" size="sm">
-              {t('CONFIRM_DELETE')}
-            </Heading>
-          </PopoverHeader>
-          <PopoverBody>
-            <Stack spacing={3}>
-              <Text>{t('ARE_YOU_SURE_YOU_WANT_TO_DELETE')}</Text>
-              <ButtonGroup marginLeft="auto">
-                <Button onClick={onDelete}>{t('DELETE')}</Button>
-                <Button variant="ghost" onClick={onClose}>
-                  {t('CANCEL')}
-                </Button>
-              </ButtonGroup>
-            </Stack>
-          </PopoverBody>
-        </PopoverContent>
-      </>
-    )}
-  </Popover>
-)
+const DeleteButton = ({ onDelete }) => {
+  const initialFocusRef = React.useRef()
+
+  return (
+    <Popover initialFocusRef={initialFocusRef}>
+      {({ onClose }) => (
+        <>
+          <PopoverTrigger>
+            <IconButton
+              title={t('DELETE')}
+              aria-label={t('DELETE')}
+              icon={<DeleteIcon />}
+              borderRadius="200px"
+            />
+          </PopoverTrigger>
+
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverHeader>
+              <Heading as="h4" size="sm">
+                {t('CONFIRM_DELETE')}
+              </Heading>
+            </PopoverHeader>
+            <PopoverBody>
+              <Stack spacing={3}>
+                <Text>{t('ARE_YOU_SURE_YOU_WANT_TO_DELETE')}</Text>
+                <ButtonGroup marginLeft="auto">
+                  <Button ref={initialFocusRef} onClick={onDelete}>
+                    {t('DELETE')}
+                  </Button>
+                  <Button variant="ghost" onClick={onClose}>
+                    {t('CANCEL')}
+                  </Button>
+                </ButtonGroup>
+              </Stack>
+            </PopoverBody>
+          </PopoverContent>
+        </>
+      )}
+    </Popover>
+  )
+}
 
 const MOTION = {
   INITIAL: { opacity: 0 },
   VISIBLE: { opacity: 1 },
 }
 
-const getFileName = (answer) => {
-  return 'math-editor-download.json'
-}
-
-const handleDownload = (answer) => {
-  const fileName = getFileName(answer)
-
-  var fileToSave = new Blob([JSON.stringify(answer)], {
-    type: 'application/json',
-    name: fileName,
-  })
-
-  saveAs(fileToSave, fileName)
-}
-
 const AnswerCard = ({ answer, onDelete, onClick }) => (
   <Box
     as={motion.li}
     layout
-    bgColor="peach.600"
+    bgColor="rgba(255, 255, 255, 0.5)"
     p={3}
     initial={MOTION.INITIAL}
     animate={MOTION.VISIBLE}
@@ -133,19 +129,18 @@ const AnswerCard = ({ answer, onDelete, onClick }) => (
           title={answer.title || t('NEW_ANSWER')}
           as="p"
           size="sm"
-          whiteSpace="nowrap"
-          textOverflow="ellipsis"
-          overflow="hidden"
+          width="100%"
+          isTruncated
         >
           {answer.title || t('NEW_ANSWER')}
         </Heading>
 
-        <Heading as="p" size="xs" fontWeight="medium">
+        <Heading as="p" size="xs" fontWeight="medium" width="100%" isTruncated>
           {formatDate(answer.date)}
         </Heading>
       </Button>
       <ButtonGroup spacing="0" variant="ghost">
-        <DownloadButton onDownloadFile={() => handleDownload(answer)} />
+        <DownloadButton onDownload={(type) => handleDownload(type, answer)} />
         <DeleteButton onDelete={onDelete} />
       </ButtonGroup>
     </Stack>
