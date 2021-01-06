@@ -211,7 +211,7 @@ const Editor = () => {
 
   return (
     <>
-      <InputGroup mb={5}>
+      <InputGroup mb={5} flexShrink="0">
         <InputLeftElement
           top="calc(50% - 1.25rem)"
           fontSize="1.5rem"
