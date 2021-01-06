@@ -16,6 +16,7 @@ import AnswersList from './AnswersList'
 const StyledLogo = styled(EiraLogo)`
   height: 100%;
   max-width: 100%;
+  max-height: 90px;
 `
 
 const StyledImg = styled.img`
