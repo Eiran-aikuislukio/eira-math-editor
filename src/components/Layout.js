@@ -92,8 +92,23 @@ const Layout = () => {
           <Editor />
         </GridItem>
 
-        <GridItem gridArea="footer" bg="gray.600" p={4} alignItems="center">
-          <StyledImg src={ophLogo} alt="Opetushallitus rahoittaa hanketta" />
+        <GridItem gridArea="footer" bg="gray.600" p={4}>
+          <Stack
+            height="100%"
+            spacing={4}
+            direction="row"
+            alignItems="flex-end"
+            justifyContent="space-between"
+          >
+            <StyledImg src={ophLogo} alt="Opetushallitus rahoittaa hanketta" />
+
+            <a href="https://www.netlify.com">
+              <img
+                src="https://www.netlify.com/img/global/badges/netlify-dark.svg"
+                alt="Deploys by Netlify"
+              />
+            </a>
+          </Stack>
         </GridItem>
       </Grid>
 
