@@ -1,5 +1,7 @@
 # Eira Math Editor
 
+> ### This project and documentation is a work in progress currently in alpha stages. The end goal is to create an open math formula editor that can be easily forked, themed and deployed by any school or institution.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
