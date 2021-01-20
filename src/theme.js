@@ -37,4 +37,23 @@ const colors = {
   },
 }
 
-export default extendTheme({ colors })
+const fonts = {
+  body: 'omnes-pro, system-ui, sans-serif',
+  heading: 'omnes-pro, system-ui, sans-serif',
+  editor: '"Times New Roman", serif',
+}
+
+const fontWeights = {
+  normal: 400,
+  medium: 500,
+  bold: 600,
+}
+
+const textStyles = {
+  editor: {
+    fontFamily: 'editor',
+    fontSize: 'lg',
+  },
+}
+
+export default extendTheme({ colors, fonts, fontWeights, textStyles })
