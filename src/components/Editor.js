@@ -5,13 +5,33 @@ import React, { forwardRef, useEffect, useRef } from 'react'
 import debounce from 'lodash/debounce'
 import styled from '@emotion/styled'
 import useAnswersStore from '../store/answers'
-import { Box, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
+import {
+  Box,
+  IconButton,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  useToast,
+} from '@chakra-ui/react'
 import t from '../i18n'
-import { EditIcon } from '@chakra-ui/icons'
+import { CopyIcon, EditIcon } from '@chakra-ui/icons'
 
 const EditorBox = forwardRef((props, ref) => (
   <Box ref={ref} textStyle="editor" {...props} />
 ))
+
+const AnswerWrapper = styled.div`
+  display: flex;
+  position: relative;
+  flex: 1;
+`
+
+const CopyToClipboard = styled(IconButton)`
+  position: absolute;
+  z-index: 3;
+  top: 8px;
+  right: 8px;
+`
 
 export const Answer = styled(EditorBox)`
   padding: 20px;
@@ -137,7 +157,7 @@ const onUpdateAnswer = debounce((answer) => {
   const updateAnswer = useAnswersStore.getState().updateAnswer
 
   updateAnswer(selectedAnswerId, answer)
-}, 200)
+}, 800)
 
 const initRichTextEditor = (answerNode, resultNode) => {
   makeRichText(
@@ -179,10 +199,17 @@ const initRichTextEditor = (answerNode, resultNode) => {
   }
 }
 
+const TOAST_OPTIONS = {
+  position: 'top',
+  duration: 9000,
+  isClosable: true,
+}
+
 const Editor = () => {
   const answers = useAnswersStore((state) => state.answers)
   const selectedAnswerId = useAnswersStore((state) => state.selectedAnswerId)
   const updateAnswer = useAnswersStore((state) => state.updateAnswer)
+  const toast = useToast()
 
   const answerRef = useRef()
   const resultRef = useRef()
@@ -209,6 +236,27 @@ const Editor = () => {
   const handleChangeTitle = (event) =>
     updateAnswer(selectedAnswerId, { title: event.target.value })
 
+  const handleCopyToClipboard = () => {
+    try {
+      answerRef.current.focus()
+      document.execCommand('selectAll')
+      document.execCommand('copy')
+      getSelection().empty()
+
+      toast({
+        title: t('COPIED_TO_CLIPBOARD'),
+        status: 'success',
+        ...TOAST_OPTIONS,
+      })
+    } catch (error) {
+      toast({
+        title: t('FAILED_TO_COPY_TO_CLIPBOARD'),
+        status: 'error',
+        ...TOAST_OPTIONS,
+      })
+    }
+  }
+
   return (
     <>
       <InputGroup mb={5} flexShrink="0">
@@ -228,8 +276,16 @@ const Editor = () => {
         />
       </InputGroup>
 
-      <Answer ref={answerRef} />
-      {/* Render \({}\) to inform MathJax where to render the result*/}
+      <AnswerWrapper>
+        <CopyToClipboard
+          onClick={handleCopyToClipboard}
+          aria-label={t('COPY_TO_CLIPBOARD')}
+          icon={<CopyIcon />}
+        />
+        <Answer ref={answerRef}></Answer>
+      </AnswerWrapper>
+
+      {/* Render \({}\) to inform MathJax where to render the result */}
       <Result ref={resultRef}>{'\\({}\\)'}</Result>
     </>
   )

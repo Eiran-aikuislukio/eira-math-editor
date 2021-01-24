@@ -10,6 +10,10 @@ const globalStyles = css`
   body {
     margin: 0;
   }
+
+  .rich-text-editor-tools {
+    z-index: 4;
+  }
 `
 
 const DownloadContainer = styled.div`
