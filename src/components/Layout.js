@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 
-import { ReactComponent as EiraLogo } from '../assets/logo/eira.svg'
+import { ReactComponent as Logo } from '../assets/logo/logo.svg'
 import ophLogo from '../assets/logo/OPH_rahoittaa_valkoinen.png'
 import useAnswersStore from '../store/answers'
 import Editor from './Editor'
@@ -25,7 +25,7 @@ import FileUploadModal from './FileUploadModal'
 import Shortcuts from './Shortcuts'
 import AnswersList from './AnswersList'
 
-const StyledLogo = styled(EiraLogo)`
+const StyledLogo = styled(Logo)`
   height: 90px;
   max-width: 100%;
   max-height: 100%;
