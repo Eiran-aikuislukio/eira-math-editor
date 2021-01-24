@@ -28,7 +28,7 @@ const AnswerWrapper = styled.div`
 
 const CopyToClipboard = styled(IconButton)`
   position: absolute;
-  z-index: 100;
+  z-index: 3;
   top: 8px;
   right: 8px;
 `
