@@ -157,7 +157,7 @@ const onUpdateAnswer = debounce((answer) => {
   const updateAnswer = useAnswersStore.getState().updateAnswer
 
   updateAnswer(selectedAnswerId, answer)
-}, 200)
+}, 800)
 
 const initRichTextEditor = (answerNode, resultNode) => {
   makeRichText(
