@@ -199,6 +199,12 @@ const initRichTextEditor = (answerNode, resultNode) => {
   }
 }
 
+const TOAST_OPTIONS = {
+  position: 'top',
+  duration: 9000,
+  isClosable: true,
+}
+
 const Editor = () => {
   const answers = useAnswersStore((state) => state.answers)
   const selectedAnswerId = useAnswersStore((state) => state.selectedAnswerId)
@@ -233,7 +239,6 @@ const Editor = () => {
   const handleCopyToClipboard = () => {
     try {
       answerRef.current.focus()
-
       document.execCommand('selectAll')
       document.execCommand('copy')
       getSelection().empty()
@@ -241,15 +246,13 @@ const Editor = () => {
       toast({
         title: t('COPIED_TO_CLIPBOARD'),
         status: 'success',
-        duration: 9000,
-        isClosable: true,
+        ...TOAST_OPTIONS,
       })
     } catch (error) {
       toast({
         title: t('FAILED_TO_COPY_TO_CLIPBOARD'),
         status: 'error',
-        duration: 9000,
-        isClosable: true,
+        ...TOAST_OPTIONS,
       })
     }
   }
