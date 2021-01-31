@@ -41,7 +41,7 @@ const EditorBox = forwardRef((props, ref) => (
 const AnswerWrapper = styled.div`
   display: flex;
   position: relative;
-  flex: 1;
+  flex: 1 0 auto;
 `
 
 const CopyToClipboard = styled(IconButton)`

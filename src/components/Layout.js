@@ -126,7 +126,7 @@ const Layout = () => {
         >
           <Flex
             direction="column"
-            flex="1"
+            flex="1 0 auto"
             opacity={isSidebarExpanded ? '1' : '0'}
             transition={`opacity 0.2s ${isSidebarExpanded ? '0.2s' : '0s'}`}
           >
