@@ -1,0 +1,6 @@
+[build]
+    functions = "lambda"
+[[redirects]]
+    from = "/math.svg"
+    to = "/.netlify/functions/render-math-svg?latex=:latex"
+    query = {latex = ":latex"}
