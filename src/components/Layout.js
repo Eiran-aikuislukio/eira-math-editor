@@ -1,5 +1,5 @@
 import React from 'react'
-import { AddIcon, HamburgerIcon } from '@chakra-ui/icons'
+import { AddIcon, HamburgerIcon, ArrowLeftIcon } from '@chakra-ui/icons'
 import {
   Button,
   Drawer,
@@ -7,6 +7,7 @@ import {
   DrawerCloseButton,
   DrawerContent,
   DrawerOverlay,
+  Flex,
   Grid,
   GridItem,
   IconButton,
@@ -51,6 +52,10 @@ const Layout = () => {
     onClose: closeMenu,
   } = useDisclosure()
 
+  const { isOpen: isSidebarExpanded, onToggle: toggleSidebar } = useDisclosure({
+    defaultIsOpen: true,
+  })
+
   const handleAddAnswer = () => {
     addAnswer()
     closeMenu()
@@ -86,7 +91,7 @@ const Layout = () => {
           null,
           `'header header' 'sidebar editor' 'footer editor'`,
         ]}
-        templateColumns={['1fr', null, '300px auto', '350px auto']}
+        templateColumns={['1fr', null, 'min-content auto']}
         templateRows="max-content auto 150px"
       >
         <GridItem
@@ -112,13 +117,31 @@ const Layout = () => {
 
         <GridItem
           display={['none', null, 'flex']}
+          width={isSidebarExpanded ? ['300px', null, null, '350px'] : '80px'}
+          overflow="hidden"
+          transition="width 0.4s"
           gridArea="sidebar"
           bg="gray.500"
           p={4}
           alignItems="stretch"
           flexDirection="column"
         >
-          {sidebarContent}
+          <Flex
+            direction="column"
+            flex="1"
+            opacity={isSidebarExpanded ? '1' : '0'}
+            transition={`opacity 0.2s ${isSidebarExpanded ? '0.2s' : '0s'}`}
+          >
+            {sidebarContent}
+          </Flex>
+          <IconButton
+            alignSelf="flex-start"
+            aria-label={t('OPEN_MENU')}
+            isRound
+            transform={isSidebarExpanded ? 'rotate(0deg)' : 'rotate(180deg)'}
+            icon={<ArrowLeftIcon />}
+            onClick={toggleSidebar}
+          />
         </GridItem>
 
         <GridItem
@@ -140,6 +163,8 @@ const Layout = () => {
             direction="row"
             alignItems="flex-end"
             justifyContent="space-between"
+            opacity={[1, null, isSidebarExpanded ? '1' : '0']}
+            transition={`opacity 0.2s ${isSidebarExpanded ? '0.2s' : '0s'}`}
           >
             <StyledImg src={ophLogo} alt="Opetushallitus rahoittaa hanketta" />
 
