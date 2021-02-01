@@ -2,5 +2,5 @@
     functions = "lambda"
 [[redirects]]
     from = "/math.svg"
-    to = "/.netlify/functions/render-math-svg?latex=:latex"
-    query = {latex = ":latex"}
+    to = "/.netlify/functions/render-math-svg"
+    status = 200
