@@ -25,12 +25,7 @@ import { motion } from 'framer-motion'
 
 import t from '../i18n'
 import { handleDownload, TYPE } from '../utils/download'
-
-const formatDate = (timestamp) =>
-  new Date(timestamp).toLocaleDateString('fi', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+import { formatDate } from '../utils/date'
 
 const DownloadButton = ({ onDownload }) => (
   <Menu>
