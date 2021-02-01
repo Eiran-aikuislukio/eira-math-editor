@@ -16,6 +16,24 @@ import {
 import t from '../i18n'
 import { CopyIcon, EditIcon } from '@chakra-ui/icons'
 
+const ERROR_SVG_BASE_64 = window.btoa(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="17px" height="15px" viewBox="0 0 17 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Group 2</title>
+  <defs></defs>
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+      <g transform="translate(-241.000000, -219.000000)">
+          <g transform="translate(209.000000, 207.000000)">
+              <rect x="-1.58632797e-14" y="0" width="80" height="40"></rect>
+              <g transform="translate(32.000000, 12.000000)">
+                  <polygon id="Combined-Shape" fill="#9B0000" fill-rule="nonzero" points="0 15 8.04006 0 16.08012 15"></polygon>
+                  <polygon id="Combined-Shape-path" fill="#FFFFFF" points="7 11 9 11 9 13 7 13"></polygon>
+                  <polygon id="Combined-Shape-path" fill="#FFFFFF" points="7 5 9 5 9 10 7 10"></polygon>
+              </g>
+          </g>
+      </g>
+  </g>
+</svg>`)
+
 const EditorBox = forwardRef((props, ref) => (
   <Box ref={ref} textStyle="editor" {...props} />
 ))
@@ -23,7 +41,7 @@ const EditorBox = forwardRef((props, ref) => (
 const AnswerWrapper = styled.div`
   display: flex;
   position: relative;
-  flex: 1;
+  flex: 1 0 auto;
 `
 
 const CopyToClipboard = styled(IconButton)`
@@ -39,12 +57,9 @@ export const Answer = styled(EditorBox)`
   background-color: #fff;
   position: relative;
 
-  &.rich-text-editor-button[data-command]:hover:after,
-  &.rich-text-editor-button-action[data-command]:hover:after {
-    padding: 15px;
-  }
-
-  &.rich-text-editor img[src^='data:image/svg+xml'] {
+  img[src*='/math.svg'],
+  img[src^='data:image/svg+xml'] {
+    display: inline-block;
     vertical-align: middle;
     margin: 4px;
     padding: 3px 10px;
@@ -52,18 +67,25 @@ export const Answer = styled(EditorBox)`
     border: 1px solid transparent;
   }
 
-  &.rich-text-editor.rich-text-focused img[src^='data:image/svg+xml'],
-  &.rich-text-editor:focus img[src^='data:image/svg+xml'] {
+  img[src$='/math.svg?latex='],
+  img[src=''] {
+    display: none;
+  }
+
+  &:focus img[src*='/math.svg'],
+  &.rich-text-focused img[src*='/math.svg'],
+  &:focus img[src^='data:image/svg+xml'],
+  &.rich-text-focused img[src^='data:image/svg+xml'] {
     background: #edf9ff;
     border: 1px solid #e6f2f8;
   }
 
-  &.rich-text-editor img[src*='data:image/png'] {
+  img[src*='data:image/png'] {
     margin: 4px;
   }
 
-  &.rich-text-editor:focus img[src*='data:image/png'],
-  &.rich-text-editor.rich-text-focused img[src*='data:image/png'] {
+  &:focus img[src*='data:image/png'],
+  &.rich-text-focused img[src*='data:image/png'] {
     box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.2);
   }
 `
@@ -104,7 +126,7 @@ MathJax.Hub.Config({
 const encodeMultibyteUnicodeCharactersWithEntities = (str) =>
   str.replace(/[^\x00-\xFF]/g, (c) => `&#${c.charCodeAt(0).toString(10)};`)
 
-const transformMath = (math, callback, svgNodes) => {
+const transformMath = (callback, svgNodes) => {
   if (svgNodes.length) {
     svgNodes.forEach((node) => {
       node.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
@@ -124,32 +146,48 @@ const transformMath = (math, callback, svgNodes) => {
       svgHtml = svgHtml.replace(/ ns\d+:href/gi, ' xlink:href') // Safari xlink ns issue fix
 
       callback(
-        'data:image/svg+xml;base64,' +
-          window.btoa(encodeMultibyteUnicodeCharactersWithEntities(svgHtml))
+        `data:image/svg+xml;base64,${window.btoa(
+          encodeMultibyteUnicodeCharactersWithEntities(svgHtml)
+        )}`
       )
     })
   } else {
-    callback(
-      'data:image/svg+xml;base64,' +
-        window.btoa(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-      <svg width="17px" height="15px" viewBox="0 0 17 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <title>Group 2</title>
-        <defs></defs>
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-            <g transform="translate(-241.000000, -219.000000)">
-                <g transform="translate(209.000000, 207.000000)">
-                    <rect x="-1.58632797e-14" y="0" width="80" height="40"></rect>
-                    <g transform="translate(32.000000, 12.000000)">
-                        <polygon id="Combined-Shape" fill="#9B0000" fill-rule="nonzero" points="0 15 8.04006 0 16.08012 15"></polygon>
-                        <polygon id="Combined-Shape-path" fill="#FFFFFF" points="7 11 9 11 9 13 7 13"></polygon>
-                        <polygon id="Combined-Shape-path" fill="#FFFFFF" points="7 5 9 5 9 10 7 10"></polygon>
-                    </g>
-                </g>
-            </g>
-        </g>
-      </svg>`)
-    )
+    callback(`data:image/svg+xml;base64,${ERROR_SVG_BASE_64}`)
   }
+}
+
+const trim = (latex) => (latex.replace(/(\\|\s)*/g, '') === '' ? '' : latex)
+
+const setServerSideSvg = ($img, latex) => {
+  const trimmedLatex = trim(latex)
+
+  $img.prop({
+    src: `/math.svg?latex=${encodeURIComponent(trimmedLatex)}`,
+    alt: trimmedLatex,
+  })
+
+  $img.closest('[data-js="answer"]').trigger('input')
+}
+
+const updateClientSideMath = function (latex, callback, resultNode) {
+  const math = MathJax.Hub.getAllJax('MathOutput')[0]
+
+  MathJax.Hub.queue.Push(['Text', math, '\\displaystyle{' + latex + '}'])
+
+  MathJax.Hub.Queue(() =>
+    transformMath(callback, resultNode.querySelectorAll('svg'))
+  )
+}
+
+const setClientSideSvg = ($img, latex, resultNode) => {
+  updateClientSideMath(
+    latex,
+    (svg) => {
+      $img.prop({ src: svg, alt: latex })
+      $img.closest('[data-js="answer"]').trigger('input')
+    },
+    resultNode
+  )
 }
 
 const onUpdateAnswer = debounce((answer) => {
@@ -174,29 +212,17 @@ const initRichTextEditor = (answerNode, resultNode) => {
             reader.readAsDataURL(data)
           }),
       },
-      baseUrl: 'https://math-demo.abitti.fi',
-      updateMathImg: ($img, latex) => {
-        updateMath(latex, (svg) => {
-          $img.prop({
-            src: svg,
-            alt: latex,
-          })
-          $img.closest('[data-js="answer"]').trigger('input')
-        })
+      baseUrl: process.env.REACT_APP_URL,
+      updateMathImg($img, latex) {
+        if (process.env.REACT_APP_SVG_RENDERING === 'server') {
+          setServerSideSvg($img, latex)
+        } else {
+          setClientSideSvg($img, latex, resultNode)
+        }
       },
     },
     onUpdateAnswer
   )
-
-  const updateMath = function (latex, callback) {
-    const math = MathJax.Hub.getAllJax('MathOutput')[0]
-
-    MathJax.Hub.queue.Push(['Text', math, '\\displaystyle{' + latex + '}'])
-
-    MathJax.Hub.Queue(() =>
-      transformMath(math, callback, resultNode.querySelectorAll('svg'))
-    )
-  }
 }
 
 const TOAST_OPTIONS = {

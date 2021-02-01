@@ -7,7 +7,9 @@ import { Heading } from '@chakra-ui/react'
 import { Answer } from '../components/Editor'
 import html2canvas from 'html2canvas'
 
+import logo from '../assets/logo/logo.png'
 import t from '../i18n'
+import { formatDate } from './date'
 
 export const DOWNLOAD_FILENAME = 'eira-math-editor'
 
@@ -73,6 +75,15 @@ const downloadImage = async (answer) => {
   saveAs(canvas.toDataURL(), `${DOWNLOAD_FILENAME}.png`)
 }
 
+const drawHeader = (doc) => {
+  const date = formatDate(Date.now())
+
+  doc.setFontSize(10)
+  doc.addImage(logo, 'PNG', 5, 5, 50, 50 / 2.86)
+  doc.text(160, 10, date)
+  doc.text(160, 15, process.env.REACT_APP_URL || '')
+}
+
 const downloadPdf = async (answer) => {
   const doc = new jsPDF()
   const canvas = await renderAnswerToCanvas(answer)
@@ -82,9 +93,10 @@ const downloadPdf = async (answer) => {
   const imageHeight = (canvas.height * width) / canvas.width
 
   let imageHeightRemaining = imageHeight
-  let position = 10
+  let position = 30
 
   doc.addImage(imageData, 'PNG', 0, position, width, imageHeight, '', 'FAST')
+  drawHeader(doc, answer.title)
   imageHeightRemaining -= pageHeight
 
   while (imageHeightRemaining >= 0) {

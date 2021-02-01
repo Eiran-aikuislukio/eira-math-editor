@@ -29,17 +29,34 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### `netlify dev`
 
-### `yarn eject`
+To run serverless functions locally
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Deployment
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+TODO
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Server-side vs client-side rendering of formulas
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+There are two approaches to rendering LaTeX formulas, which configured in `.env` files at the root of the repository:
+
+1. Server-side, enabled if `REACT_APP_SVG_RENDERING=server`. Images are rendered by the serverless function [`render-math-svg.js`](./lambda/render-math-svg.js), which converts LaTeX to SVG.
+2. Client-side, enabled if `REACT_APP_SVG_RENDERING=client`. Images are Base64 encoded and the entire application can be hosted as a static website without serverless functions.
+
+### Which approach should I use?
+
+Use server-side rendering if there's a need to paste content from the editor to another website e.g. Moodle. Moodle and other tools may not allow Base64 encoded (client-side) images and require images to be returned from a url e.g `<img src="https://editori.example.com/math.svg?latex=xyz">`.
+
+Use client-side rendering to save on the costs of running serverless functions and for simple deployment of a static website.
+
+> Note: `/math.svg` is the required route for server-side formula rendering as this is used internally by `makeRichText`. A redirect in `netlify.toml` sends requests from `/math.svg` to the serverless function [render-math-svg.js](./lambda/render-math-svg.js).
+
+## Global store
+
+TODO
+
+##
 
 ## Contributing
 

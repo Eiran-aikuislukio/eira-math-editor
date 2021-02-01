@@ -1,12 +1,14 @@
 import React from 'react'
-import { AddIcon, HamburgerIcon } from '@chakra-ui/icons'
+import { AddIcon, HamburgerIcon, ArrowLeftIcon } from '@chakra-ui/icons'
 import {
+  Box,
   Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
   DrawerOverlay,
+  Flex,
   Grid,
   GridItem,
   IconButton,
@@ -16,7 +18,6 @@ import {
 import styled from '@emotion/styled'
 
 import { ReactComponent as Logo } from '../assets/logo/logo.svg'
-import ophLogo from '../assets/logo/OPH_rahoittaa_valkoinen.png'
 import useAnswersStore from '../store/answers'
 import Editor from './Editor'
 import UploadIcon from './UploadIcon'
@@ -24,16 +25,12 @@ import t from '../i18n'
 import FileUploadModal from './FileUploadModal'
 import Shortcuts from './Shortcuts'
 import AnswersList from './AnswersList'
+import Footer from './Footer'
 
 const StyledLogo = styled(Logo)`
   height: 90px;
   max-width: 100%;
   max-height: 100%;
-`
-
-const StyledImg = styled.img`
-  width: auto;
-  height: 100%;
 `
 
 const Layout = () => {
@@ -51,6 +48,10 @@ const Layout = () => {
     onClose: closeMenu,
   } = useDisclosure()
 
+  const { isOpen: isSidebarExpanded, onToggle: toggleSidebar } = useDisclosure({
+    defaultIsOpen: true,
+  })
+
   const handleAddAnswer = () => {
     addAnswer()
     closeMenu()
@@ -61,6 +62,8 @@ const Layout = () => {
     closeModal()
     closeMenu()
   }
+
+  const sidebarWidth = ['100%', null, isSidebarExpanded ? '300px' : '35px']
 
   const sidebarContent = (
     <>
@@ -86,8 +89,8 @@ const Layout = () => {
           null,
           `'header header' 'sidebar editor' 'footer editor'`,
         ]}
-        templateColumns={['1fr', null, '300px auto', '350px auto']}
-        templateRows="max-content auto 150px"
+        templateColumns={['100%', null, 'min-content auto']}
+        templateRows="max-content 1fr auto"
       >
         <GridItem
           gridArea="header"
@@ -112,13 +115,23 @@ const Layout = () => {
 
         <GridItem
           display={['none', null, 'flex']}
+          width={sidebarWidth}
+          overflowX="hidden"
+          transition="width 0.4s"
           gridArea="sidebar"
           bg="gray.500"
           p={4}
           alignItems="stretch"
           flexDirection="column"
         >
-          {sidebarContent}
+          <Flex
+            direction="column"
+            flex="1 0 auto"
+            opacity={isSidebarExpanded ? '1' : '0'}
+            transition={`opacity 0.2s ${isSidebarExpanded ? '0.2s' : '0s'}`}
+          >
+            {sidebarContent}
+          </Flex>
         </GridItem>
 
         <GridItem
@@ -133,23 +146,36 @@ const Layout = () => {
           <Editor />
         </GridItem>
 
-        <GridItem gridArea="footer" bg="gray.600" p={4}>
-          <Stack
-            height="100%"
-            spacing={4}
-            direction="row"
-            alignItems="flex-end"
-            justifyContent="space-between"
-          >
-            <StyledImg src={ophLogo} alt="Opetushallitus rahoittaa hanketta" />
+        <GridItem
+          position="relative"
+          gridArea="footer"
+          bg="gray.600"
+          transition="width 0.4s"
+          p={4}
+          width={sidebarWidth}
+        >
+          <IconButton
+            position="absolute"
+            display={['none', null, 'flex']}
+            top="-20px"
+            zIndex="4"
+            aria-label={t('TOGGLE_SIDEBAR')}
+            isRound
+            transform={isSidebarExpanded ? 'rotate(0deg)' : 'rotate(180deg)'}
+            icon={<ArrowLeftIcon />}
+            onClick={toggleSidebar}
+          />
 
-            <a href="https://www.netlify.com">
-              <img
-                src="https://www.netlify.com/img/global/badges/netlify-dark.svg"
-                alt="Deploys by Netlify"
-              />
-            </a>
-          </Stack>
+          <Box
+            color="white"
+            pt={[0, null, 6]}
+            minWidth="240px" // Prevent wrapping when sidebar collapses
+            visibility={isSidebarExpanded ? 'visible' : 'hidden'}
+            opacity={[1, null, isSidebarExpanded ? '1' : '0']}
+            transition={`opacity 0.2s ${isSidebarExpanded ? '0.2s' : '0s'}`}
+          >
+            <Footer />
+          </Box>
         </GridItem>
       </Grid>
 

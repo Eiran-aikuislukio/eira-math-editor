@@ -2,6 +2,7 @@
   "name": "eira-math-editor",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "dependencies": {
     "@chakra-ui/icons": "^1.0.2",
     "@chakra-ui/react": "^1.0.1",
@@ -17,6 +18,7 @@
     "jspdf": "^2.2.0",
     "lint-staged": "^10.5.2",
     "lodash": "^4.17.20",
+    "mathjax-node": "^2.1.1",
     "prettier": "^2.2.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
