@@ -1,3 +1,7 @@
+/**
+ * A simple dictionary to easier translate texts in future, currently only in English
+ */
+
 const DICTIONARY = {
   NEW_ANSWER: 'New answer',
   DOWNLOAD: 'Download',
@@ -12,7 +16,6 @@ const DICTIONARY = {
     'File not recognised, please upload a file that has been created with this editor',
   INVALID_FILE_FORMAT:
     'Invalid file, please upload a file that has been created with this editor',
-  PLEASE_UPLOAD_A_FILE: 'Please upload a json file created with this editor',
   FILE_UPLOAD_SUCCESS: 'Looks good',
 
   CHOOSE_A_FILE: 'Choose a file',
@@ -23,6 +26,15 @@ const DICTIONARY = {
       <code>math-editor.json</code>
     </>
   ),
+  TITLE: 'Title',
+  COPY_TO_CLIPBOARD: 'Copy to clipboard',
+  COPIED_TO_CLIPBOARD: 'Copied to clipboard',
+  FAILED_TO_COPY_TO_CLIPBOARD: 'Failed to copy to clipboard',
+  DOWNLOAD_FILE: 'Download file',
+  SAVE_IMAGE: 'Save as image',
+  SAVE_PDF: 'Save as PDF',
+  OPEN_MENU: 'Open menu',
+  TOGGLE_SIDEBAR: 'Toggle sidebar',
 }
 
 const t = (key) => DICTIONARY[key] || key
