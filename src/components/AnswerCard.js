@@ -5,27 +5,21 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Checkbox,
   Heading,
   IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTrigger,
   Stack,
-  Text,
 } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 
 import t from '../i18n'
 import { handleDownload, TYPE } from '../utils/download'
 import { formatDate } from '../utils/date'
+import ConfirmDelete from './ConfirmDelete'
 
 const DownloadButton = ({ onDownload }) => (
   <Menu>
@@ -48,56 +42,12 @@ const DownloadButton = ({ onDownload }) => (
   </Menu>
 )
 
-const DeleteButton = ({ onDelete }) => {
-  const initialFocusRef = React.useRef()
-
-  return (
-    <Popover initialFocusRef={initialFocusRef}>
-      {({ onClose }) => (
-        <>
-          <PopoverTrigger>
-            <IconButton
-              title={t('DELETE')}
-              aria-label={t('DELETE')}
-              icon={<DeleteIcon />}
-              borderRadius="200px"
-            />
-          </PopoverTrigger>
-
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverCloseButton />
-            <PopoverHeader>
-              <Heading as="h4" size="sm">
-                {t('CONFIRM_DELETE')}
-              </Heading>
-            </PopoverHeader>
-            <PopoverBody>
-              <Stack spacing={3}>
-                <Text>{t('ARE_YOU_SURE_YOU_WANT_TO_DELETE')}</Text>
-                <ButtonGroup marginLeft="auto">
-                  <Button ref={initialFocusRef} onClick={onDelete}>
-                    {t('DELETE')}
-                  </Button>
-                  <Button variant="ghost" onClick={onClose}>
-                    {t('CANCEL')}
-                  </Button>
-                </ButtonGroup>
-              </Stack>
-            </PopoverBody>
-          </PopoverContent>
-        </>
-      )}
-    </Popover>
-  )
-}
-
 const MOTION = {
   INITIAL: { opacity: 0 },
   VISIBLE: { opacity: 1 },
 }
 
-const AnswerCard = ({ answer, onDelete, onClick }) => (
+const AnswerCard = ({ answer, onDelete, onClick, onCheck, isSelected }) => (
   <Box
     as={motion.li}
     layout
@@ -109,6 +59,11 @@ const AnswerCard = ({ answer, onDelete, onClick }) => (
     listStyleType="none"
   >
     <Stack direction="row" justifyContent="space-between">
+      <Checkbox
+        mr={2}
+        isChecked={isSelected}
+        onChange={(e) => onCheck(e.target.checked)}
+      />
       <Button
         variant="unstyled"
         onClick={onClick}
@@ -136,7 +91,14 @@ const AnswerCard = ({ answer, onDelete, onClick }) => (
       </Button>
       <ButtonGroup spacing="0" variant="ghost">
         <DownloadButton onDownload={(type) => handleDownload(type, answer)} />
-        <DeleteButton onDelete={onDelete} />
+        <ConfirmDelete onConfirmDelete={onDelete}>
+          <IconButton
+            title={t('DELETE')}
+            aria-label={t('DELETE')}
+            icon={<DeleteIcon />}
+            isRound
+          />
+        </ConfirmDelete>
       </ButtonGroup>
     </Stack>
   </Box>
@@ -146,6 +108,8 @@ AnswerCard.propTypes = {
   answer: PropTypes.shape().isRequired,
   onDelete: PropTypes.func.isRequired,
   onClick: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  isSelected: PropTypes.bool,
 }
 
 export default AnswerCard

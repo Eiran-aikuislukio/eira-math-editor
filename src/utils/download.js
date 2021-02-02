@@ -32,32 +32,38 @@ const isDefaultTitle = (title) => title === t('NEW_ANSWER')
  * @param {Answer} answer
  * @returns {Promise<{container: HTMLElement, onComplete: () => void}>}
  */
-const renderAnswerForDownload = (answer) => {
+const renderAnswersForDownload = (answers) => {
   const container = document.getElementById('download-container')
 
   ReactDOM.render(
     <Providers>
-      {!isDefaultTitle(answer.title) && (
-        <Heading size="lg" m={4}>
-          {answer.title}
-        </Heading>
-      )}
+      {answers.map((answer) => (
+        <div key={answer.id}>
+          {!isDefaultTitle(answer.title) && (
+            <Heading size="lg" m={4}>
+              {answer.title}
+            </Heading>
+          )}
 
-      <Answer dangerouslySetInnerHTML={{ __html: answer.answerHTML }} />
+          <Answer dangerouslySetInnerHTML={{ __html: answer.answerHTML }} />
+        </div>
+      ))}
     </Providers>,
     container
   )
 
   return new Promise((resolve) => {
-    resolve({
-      container,
-      onComplete: () => ReactDOM.unmountComponentAtNode(container),
-    })
+    setTimeout(() => {
+      resolve({
+        container,
+        onComplete: () => ReactDOM.unmountComponentAtNode(container),
+      })
+    }, 500)
   })
 }
 
-const renderAnswerToCanvas = async (answer) => {
-  const { container, onComplete } = await renderAnswerForDownload(answer)
+const createAnswersCanvas = async (...answers) => {
+  const { container, onComplete } = await renderAnswersForDownload(answers)
 
   const canvas = await html2canvas(container, {
     height: container.clientHeight,
@@ -70,7 +76,7 @@ const renderAnswerToCanvas = async (answer) => {
 }
 
 const downloadImage = async (answer) => {
-  const canvas = await renderAnswerToCanvas(answer)
+  const canvas = await createAnswersCanvas(answer)
 
   saveAs(canvas.toDataURL(), `${DOWNLOAD_FILENAME}.png`)
 }
@@ -84,19 +90,18 @@ const drawHeader = (doc) => {
   doc.text(160, 15, process.env.REACT_APP_URL || '')
 }
 
-const downloadPdf = async (answer) => {
+const downloadPdf = async (answerCanvas) => {
   const doc = new jsPDF()
-  const canvas = await renderAnswerToCanvas(answer)
-  const imageData = canvas.toDataURL('image/png')
+  const imageData = answerCanvas.toDataURL('image/png')
   const width = Math.floor(doc.internal.pageSize.getWidth())
   const pageHeight = Math.floor(doc.internal.pageSize.getHeight())
-  const imageHeight = (canvas.height * width) / canvas.width
+  const imageHeight = (answerCanvas.height * width) / answerCanvas.width
 
   let imageHeightRemaining = imageHeight
   let position = 30
 
   doc.addImage(imageData, 'PNG', 0, position, width, imageHeight, '', 'FAST')
-  drawHeader(doc, answer.title)
+  drawHeader(doc)
   imageHeightRemaining -= pageHeight
 
   while (imageHeightRemaining >= 0) {
@@ -120,20 +125,29 @@ const downloadFile = (answer) => {
   saveAs(fileToSave, fileName)
 }
 
+export const combineAndDownloadPdf = async (answers) => {
+  const canvas = await createAnswersCanvas(...answers)
+
+  downloadPdf(canvas)
+}
+
 export const TYPE = {
   FILE: 'FILE',
   PDF: 'PDF',
   IMAGE: 'IMAGE',
 }
 
-export const handleDownload = (type, answer) => {
+export const handleDownload = async (type, answer) => {
   switch (type) {
     case TYPE.FILE:
       downloadFile(answer)
       break
     case TYPE.PDF:
-      downloadPdf(answer)
+      const canvas = await createAnswersCanvas(answer)
+
+      downloadPdf(canvas)
       break
+
     case TYPE.IMAGE:
       downloadImage(answer)
       break

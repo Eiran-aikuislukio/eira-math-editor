@@ -9,6 +9,8 @@ const DICTIONARY = {
   CANCEL: 'Cancel',
   OPEN_FILE: 'Open file',
   CONFIRM_DELETE: 'Confirm delete',
+  CONFIRM_DELETE_SELECTED:
+    'Are you sure you want to delete the selected answers? This action can not be undone.',
   ARE_YOU_SURE_YOU_WANT_TO_DELETE:
     'Are you sure you want to delete this answer? This action can not be undone.',
 
@@ -16,7 +18,7 @@ const DICTIONARY = {
     'File not recognised, please upload a file that has been created with this editor',
   INVALID_FILE_FORMAT:
     'Invalid file, please upload a file that has been created with this editor',
-  FILE_UPLOAD_SUCCESS: 'Looks good',
+  FILE_UPLOAD_SUCCESS: 'File uploaded successfully',
 
   CHOOSE_A_FILE: 'Choose a file',
   OR_DRAG_IT_HERE: 'or drag it here',

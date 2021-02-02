@@ -1,8 +1,7 @@
 import React from 'react'
-import { AddIcon, HamburgerIcon, ArrowLeftIcon } from '@chakra-ui/icons'
+import { HamburgerIcon, ArrowLeftIcon } from '@chakra-ui/icons'
 import {
   Box,
-  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -12,7 +11,6 @@ import {
   Grid,
   GridItem,
   IconButton,
-  Stack,
   useDisclosure,
 } from '@chakra-ui/react'
 import styled from '@emotion/styled'
@@ -20,12 +18,10 @@ import styled from '@emotion/styled'
 import { ReactComponent as Logo } from '../assets/logo/logo.svg'
 import useAnswersStore from '../store/answers'
 import Editor from './Editor'
-import UploadIcon from './UploadIcon'
 import t from '../i18n'
-import FileUploadModal from './FileUploadModal'
 import Shortcuts from './Shortcuts'
-import AnswersList from './AnswersList'
 import Footer from './Footer'
+import Sidebar from './Sidebar'
 
 const StyledLogo = styled(Logo)`
   height: 90px;
@@ -34,13 +30,10 @@ const StyledLogo = styled(Logo)`
 `
 
 const Layout = () => {
+  const answers = useAnswersStore((state) => state.answers)
   const addAnswer = useAnswersStore((state) => state.addAnswer)
-
-  const {
-    isOpen: isModalOpen,
-    onOpen: openModal,
-    onClose: closeModal,
-  } = useDisclosure()
+  const deleteAnswer = useAnswersStore((state) => state.deleteAnswer)
+  const selectAnswer = useAnswersStore((state) => state.selectAnswer)
 
   const {
     isOpen: isMenuOpen,
@@ -52,32 +45,25 @@ const Layout = () => {
     defaultIsOpen: true,
   })
 
-  const handleAddAnswer = () => {
-    addAnswer()
+  const handleAddAnswer = (answer) => {
+    addAnswer(answer)
     closeMenu()
   }
 
-  const handleFileSubmit = (fileContent) => {
-    addAnswer(fileContent)
-    closeModal()
+  const handleClickAnswer = (answer) => {
     closeMenu()
+    selectAnswer(answer.id)
   }
 
   const sidebarWidth = ['100%', null, isSidebarExpanded ? '300px' : '35px']
 
-  const sidebarContent = (
-    <>
-      <Stack direction="row" spacing={2} mb={2}>
-        <Button leftIcon={<AddIcon />} onClick={handleAddAnswer}>
-          {t('NEW_ANSWER')}
-        </Button>
-        <Button leftIcon={<UploadIcon />} onClick={openModal}>
-          {t('OPEN_FILE')}
-        </Button>
-      </Stack>
-
-      <AnswersList onClick={closeMenu} />
-    </>
+  const sidebar = (
+    <Sidebar
+      answers={answers}
+      onAddAnswer={handleAddAnswer}
+      onDeleteAnswer={deleteAnswer}
+      onClickAnswer={handleClickAnswer}
+    />
   )
 
   return (
@@ -130,7 +116,7 @@ const Layout = () => {
             opacity={isSidebarExpanded ? '1' : '0'}
             transition={`opacity 0.2s ${isSidebarExpanded ? '0.2s' : '0s'}`}
           >
-            {sidebarContent}
+            {sidebar}
           </Flex>
         </GridItem>
 
@@ -179,12 +165,6 @@ const Layout = () => {
         </GridItem>
       </Grid>
 
-      <FileUploadModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onSubmit={handleFileSubmit}
-      />
-
       <Drawer isOpen={isMenuOpen} placement="left" onClose={closeMenu}>
         <DrawerOverlay>
           <DrawerContent bg="gray.500" pt={14}>
@@ -195,7 +175,7 @@ const Layout = () => {
               alignItems="stretch"
               flexDirection="column"
             >
-              {sidebarContent}
+              {sidebar}
             </DrawerBody>
           </DrawerContent>
         </DrawerOverlay>
