@@ -30,7 +30,6 @@ const StyledLogo = styled(Logo)`
 `
 
 const Layout = () => {
-  const answers = useAnswersStore((state) => state.answers)
   const addAnswer = useAnswersStore((state) => state.addAnswer)
   const deleteAnswer = useAnswersStore((state) => state.deleteAnswer)
   const selectAnswer = useAnswersStore((state) => state.selectAnswer)
@@ -59,7 +58,6 @@ const Layout = () => {
 
   const sidebar = (
     <Sidebar
-      answers={answers}
       onAddAnswer={handleAddAnswer}
       onDeleteAnswer={deleteAnswer}
       onClickAnswer={handleClickAnswer}

@@ -47,16 +47,27 @@ const MOTION = {
   VISIBLE: { opacity: 1 },
 }
 
-const AnswerCard = ({ answer, onDelete, onClick, onCheck, isSelected }) => (
+const AnswerCard = ({
+  answer,
+  onDelete,
+  onClick,
+  onCheck,
+  isActive,
+  isSelected,
+}) => (
   <Box
     as={motion.li}
     layout
-    bgColor="rgba(255, 255, 255, 0.5)"
+    bgColor={isActive ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.5)'}
+    borderColor="black"
+    borderStyle="solid"
+    borderBottomWidth={isActive ? 3 : 0}
     p={3}
     initial={MOTION.INITIAL}
     animate={MOTION.VISIBLE}
     exit={MOTION.INITIAL}
     listStyleType="none"
+    transition="border-width 0.2s"
   >
     <Stack direction="row" justifyContent="space-between">
       <Checkbox
@@ -109,6 +120,7 @@ AnswerCard.propTypes = {
   onDelete: PropTypes.func.isRequired,
   onClick: PropTypes.func.isRequired,
   onCheck: PropTypes.func.isRequired,
+  isActive: PropTypes.bool,
   isSelected: PropTypes.bool,
 }
 

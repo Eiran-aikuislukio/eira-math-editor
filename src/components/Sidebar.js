@@ -17,13 +17,17 @@ import AnswerCard from './AnswerCard'
 import FileUploadModal from './FileUploadModal'
 import ConfirmDelete from './ConfirmDelete'
 import { combineAndDownloadPdf } from '../utils/download'
+import useAnswersStore from '../store/answers'
 
 const MOTION = {
   initial: { opacity: 0, y: -10 },
   animate: { opacity: 1, y: 0 },
 }
 
-const Sidebar = ({ answers, onAddAnswer, onDeleteAnswer, onClickAnswer }) => {
+const Sidebar = ({ onAddAnswer, onDeleteAnswer, onClickAnswer }) => {
+  const answers = useAnswersStore((state) => state.answers)
+  const activeAnswer = useAnswersStore((state) => state.selectedAnswerId)
+
   const [selectedAnswers, setSelectedAnswers] = useState([])
 
   const {
@@ -141,6 +145,7 @@ const Sidebar = ({ answers, onAddAnswer, onDeleteAnswer, onClickAnswer }) => {
               onDelete={() => handleDeleteAnswer(answer)}
               onClick={() => onClickAnswer(answer)}
               onCheck={(isSelected) => handleCheckAnswer(answer.id, isSelected)}
+              isActive={activeAnswer === answer.id}
               isSelected={selectedAnswers.includes(answer.id)}
             />
           ))}
@@ -157,7 +162,6 @@ const Sidebar = ({ answers, onAddAnswer, onDeleteAnswer, onClickAnswer }) => {
 }
 
 Sidebar.propTypes = {
-  answers: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   onAddAnswer: PropTypes.func.isRequired,
   onDeleteAnswer: PropTypes.func.isRequired,
   onClickAnswer: PropTypes.func.isRequired,
