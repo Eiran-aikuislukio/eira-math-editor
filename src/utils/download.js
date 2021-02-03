@@ -16,6 +16,8 @@ export const DOWNLOAD_FILENAME = 'eira-math-editor'
 
 const isDefaultTitle = (title) => title === t('NEW_ANSWER')
 
+const url = process.env.REACT_APP_URL?.replace(/^https?:\/\//, '') || ''
+
 /**
  * An Answer
  * @typedef {Object} Answer
@@ -89,7 +91,7 @@ const drawHeader = (doc) => {
   doc.addImage(logo, 'PNG', 5, 5, 50, 50 / 2.86)
   doc.addImage(watermark, 'PNG', 176, 2, 30, 30)
   doc.text(170, 10, date)
-  doc.text(170, 15, process.env.REACT_APP_URL || '')
+  doc.text(170, 15, url)
 }
 
 const downloadPdf = async (answerCanvas) => {
