@@ -4,10 +4,11 @@ import { saveAs } from 'file-saver'
 import { jsPDF } from 'jspdf'
 import { Providers } from '../App'
 import { Heading } from '@chakra-ui/react'
-import { Answer } from '../components/Editor'
 import html2canvas from 'html2canvas'
 
+import { Answer } from '../components/Editor'
 import logo from '../assets/logo/logo.png'
+import watermark from '../assets/logo/watermark.png'
 import t from '../i18n'
 import { formatDate } from './date'
 
@@ -86,8 +87,9 @@ const drawHeader = (doc) => {
 
   doc.setFontSize(10)
   doc.addImage(logo, 'PNG', 5, 5, 50, 50 / 2.86)
-  doc.text(160, 10, date)
-  doc.text(160, 15, process.env.REACT_APP_URL || '')
+  doc.addImage(watermark, 'PNG', 176, 2, 30, 30)
+  doc.text(170, 10, date)
+  doc.text(170, 15, process.env.REACT_APP_URL || '')
 }
 
 const downloadPdf = async (answerCanvas) => {
