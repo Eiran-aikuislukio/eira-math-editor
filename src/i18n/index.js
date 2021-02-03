@@ -1,8 +1,9 @@
 /**
- * A simple dictionary to easier translate texts in future, currently only in English
+ * A simple dictionary to easier translate texts in future, currently only in Finnish
  */
 
-const DICTIONARY = {
+// eslint-disable-next-line no-unused-vars
+const EN = {
   NEW_ANSWER: 'New answer',
   DOWNLOAD: 'Download',
   DELETE: 'Delete',
@@ -39,6 +40,43 @@ const DICTIONARY = {
   TOGGLE_SIDEBAR: 'Toggle sidebar',
 }
 
-const t = (key) => DICTIONARY[key] || key
+const FI = {
+  NEW_ANSWER: 'Uusi vastaus',
+  DOWNLOAD: 'Tallenna',
+  DELETE: 'Poista',
+  CANCEL: 'Peruuta',
+  OPEN_FILE: 'Avaa',
+  CONFIRM_DELETE: 'Varmista poisto',
+  CONFIRM_DELETE_SELECTED:
+    'Haluatko varmasti poistaa valitut vastaukset? Toimintoa ei voi perua.',
+  ARE_YOU_SURE_YOU_WANT_TO_DELETE:
+    'Haluatko varmasti poistaa vastauksen? Toimintoa ei voi perua.',
+
+  INVALID_FILE:
+    'Tiedostoa ei tunnistettu. Valitse tiedosto, joka on tehty tällä editorilla.',
+  INVALID_FILE_FORMAT:
+    'Virheellinen tiedosto. Valitse tiedosto, joka on tehty tällä editorilla.',
+  FILE_UPLOAD_SUCCESS: 'Tiedosto ladattu onnistuneesti',
+
+  CHOOSE_A_FILE: 'Valitse tiedosto',
+  OR_DRAG_IT_HERE: 'tai raahaa se tähän',
+  CHOOSE_A_FILE_INSTRUCTIONS: (
+    <>
+      Valitse JSON tiedosto, joka on tallennettu Eira editorista. esim.{' '}
+      <code>math-editor.json</code>
+    </>
+  ),
+  TITLE: 'Otsikko',
+  COPY_TO_CLIPBOARD: 'Kopioi leikepöydälle',
+  COPIED_TO_CLIPBOARD: 'Sisältö kopioitu leikepöydälle',
+  FAILED_TO_COPY_TO_CLIPBOARD: 'Kopiointi ei onnistu',
+  DOWNLOAD_FILE: 'Tallenna tiedostona',
+  SAVE_IMAGE: 'Tallenna kuvana',
+  SAVE_PDF: 'Tallenna PDF',
+  OPEN_MENU: 'Avaa valikko',
+  TOGGLE_SIDEBAR: 'Vaihda sivupalkki',
+}
+
+const t = (key) => FI[key] || key
 
 export default t
