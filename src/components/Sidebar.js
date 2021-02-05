@@ -142,7 +142,7 @@ const Sidebar = ({ onAddAnswer, onDeleteAnswer, onClickAnswer }) => {
             <AnswerCard
               key={answer.id}
               answer={answer}
-              onDelete={() => handleDeleteAnswer(answer)}
+              onDelete={() => handleDeleteAnswer(answer.id)}
               onClick={() => onClickAnswer(answer)}
               onCheck={(isSelected) => handleCheckAnswer(answer.id, isSelected)}
               isActive={activeAnswer === answer.id}
