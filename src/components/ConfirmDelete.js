@@ -42,7 +42,11 @@ const ConfirmDelete = ({
               <Stack spacing={3}>
                 <Text>{confirmMessage}</Text>
                 <ButtonGroup marginLeft="auto">
-                  <Button ref={initialFocusRef} onClick={onConfirmDelete}>
+                  <Button
+                    ref={initialFocusRef}
+                    onClick={onConfirmDelete}
+                    data-testid="confirm-delete"
+                  >
                     {t('DELETE')}
                   </Button>
                   <Button variant="ghost" onClick={onClose}>
