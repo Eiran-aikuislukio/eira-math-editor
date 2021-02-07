@@ -57,6 +57,7 @@ const AnswerCard = ({
 }) => (
   <Box
     as={motion.li}
+    data-testid="answer-card"
     layout
     bgColor={isActive ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.5)'}
     borderColor="black"
