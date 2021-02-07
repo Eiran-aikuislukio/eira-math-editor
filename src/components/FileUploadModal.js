@@ -191,15 +191,15 @@ const FileUploadModal = ({ isOpen, onClose, onSubmit }) => {
 
         <ModalFooter>
           <ButtonGroup>
+            <Button variant="ghost" onClick={handleCancel}>
+              {t('CANCEL')}
+            </Button>
             <Button
               disabled={!isValid(fileContent)}
               isLoading={status === STATUS.LOADING}
               onClick={handleSubmit}
             >
               {t('OPEN_FILE')}
-            </Button>
-            <Button variant="ghost" onClick={handleCancel}>
-              {t('CANCEL')}
             </Button>
           </ButtonGroup>
         </ModalFooter>
