@@ -23,7 +23,9 @@ const getFromLocalStorage = (key, initialValue) => {
 const setLocalStorage = (answers) => {
   try {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(answers))
-  } catch (error) {}
+  } catch (error) {
+    console.warn('Failed to store items in local storage', error)
+  }
 }
 
 const persistedAnswers = getFromLocalStorage(LOCAL_KEY, [getInitialAnswer()])
