@@ -84,7 +84,7 @@ const Sidebar = ({ onAddAnswer, onDeleteAnswer, onClickAnswer }) => {
               spacing={2}
               {...MOTION}
             >
-              <Button leftIcon={<AddIcon />} onClick={onAddAnswer}>
+              <Button leftIcon={<AddIcon />} onClick={() => onAddAnswer()}>
                 {t('NEW_ANSWER')}
               </Button>
               <Button leftIcon={<UploadIcon />} onClick={openModal}>
