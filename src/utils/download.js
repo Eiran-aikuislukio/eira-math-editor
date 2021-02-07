@@ -89,7 +89,7 @@ const drawHeader = (doc) => {
 
   doc.setFontSize(10)
   doc.addImage(logo, 'PNG', 5, 5, 50, 50 / 2.86)
-  doc.addImage(watermark, 'PNG', 176, 2, 30, 30)
+  doc.addImage(watermark, 'PNG', 176, 2, 25, 25)
   doc.text(170, 10, date)
   doc.text(170, 15, url)
 }
@@ -99,20 +99,19 @@ const downloadPdf = async (answerCanvas) => {
   const imageData = answerCanvas.toDataURL('image/png')
   const width = Math.floor(doc.internal.pageSize.getWidth())
   const pageHeight = Math.floor(doc.internal.pageSize.getHeight())
-  const imageHeight = (answerCanvas.height * width) / answerCanvas.width
+  const totalHeight = (answerCanvas.height * width) / answerCanvas.width
+  const startingY = 30
 
-  let imageHeightRemaining = imageHeight
-  let position = 30
-
-  doc.addImage(imageData, 'PNG', 0, position, width, imageHeight, '', 'FAST')
   drawHeader(doc)
-  imageHeightRemaining -= pageHeight
 
-  while (imageHeightRemaining >= 0) {
-    position += imageHeightRemaining - imageHeight
-    doc.addPage()
-    doc.addImage(imageData, 'PNG', 0, position, width, imageHeight, '', 'FAST')
-    imageHeightRemaining -= pageHeight
+  // Split long images to download as a multi-page PDF
+  for (let imageY = startingY; imageY > -totalHeight; imageY -= pageHeight) {
+    // Add a new page if this isn't the first page
+    if (imageY !== startingY) {
+      doc.addPage()
+    }
+
+    doc.addImage(imageData, 'PNG', 0, imageY, width, totalHeight, '', 'FAST')
   }
 
   doc.save(`${DOWNLOAD_FILENAME}.pdf`)
@@ -146,6 +145,7 @@ export const handleDownload = async (type, answer) => {
     case TYPE.FILE:
       downloadFile(answer)
       break
+
     case TYPE.PDF:
       const canvas = await createAnswersCanvas(answer)
 
@@ -155,6 +155,7 @@ export const handleDownload = async (type, answer) => {
     case TYPE.IMAGE:
       downloadImage(answer)
       break
+
     default:
     // No default
   }
