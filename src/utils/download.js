@@ -71,6 +71,7 @@ const createAnswersCanvas = async (...answers) => {
   const canvas = await html2canvas(container, {
     height: container.clientHeight,
     scale: 2,
+    allowTaint: true,
   })
 
   onComplete()
