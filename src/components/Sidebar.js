@@ -16,7 +16,7 @@ import t from '../i18n'
 import AnswerCard from './AnswerCard'
 import FileUploadModal from './FileUploadModal'
 import ConfirmDelete from './ConfirmDelete'
-import { combineAndDownloadPdf } from '../utils/download'
+import { downloadPdf } from '../utils/download'
 import useAnswersStore from '../store/answers'
 
 const MOTION = {
@@ -29,6 +29,7 @@ const Sidebar = ({ onAddAnswer, onDeleteAnswer, onClickAnswer }) => {
   const activeAnswer = useAnswersStore((state) => state.selectedAnswerId)
 
   const [selectedAnswers, setSelectedAnswers] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
   const {
     isOpen: isModalOpen,
@@ -58,10 +59,14 @@ const Sidebar = ({ onAddAnswer, onDeleteAnswer, onClickAnswer }) => {
     setSelectedAnswers(isChecked ? answers.map(({ id }) => id) : [])
   }
 
-  const handleDownloadSelected = () => {
-    combineAndDownloadPdf(
+  const handleDownloadSelected = async () => {
+    setIsLoading(true)
+
+    await downloadPdf(
       answers.filter((answer) => selectedAnswers.includes(answer.id))
     )
+
+    setIsLoading(false)
   }
 
   const handleDeleteSelected = () => {
@@ -107,6 +112,7 @@ const Sidebar = ({ onAddAnswer, onDeleteAnswer, onClickAnswer }) => {
               />
               <Button
                 borderRadius={20}
+                isLoading={isLoading}
                 leftIcon={<DownloadIcon />}
                 onClick={handleDownloadSelected}
               >
