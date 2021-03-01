@@ -1,22 +1,19 @@
 import ReactDOM from 'react-dom'
 import React from 'react'
 import { saveAs } from 'file-saver'
-import { jsPDF } from 'jspdf'
+import castArray from 'lodash/castArray'
 import { Providers } from '../App'
 import { Heading } from '@chakra-ui/react'
 import html2canvas from 'html2canvas'
+import html2pdf from 'html2pdf.js'
 
 import { Answer } from '../components/Editor'
-import logo from '../assets/logo/logo.png'
-import watermark from '../assets/logo/watermark.png'
 import t from '../i18n'
-import { formatDate } from './date'
+import PdfHeader from '../components/PdfHeader'
 
 export const DOWNLOAD_FILENAME = 'eira-math-editor'
 
 const isDefaultTitle = (title) => title === t('NEW_ANSWER')
-
-const url = process.env.REACT_APP_URL?.replace(/^https?:\/\//, '') || ''
 
 /**
  * An Answer
@@ -28,6 +25,39 @@ const url = process.env.REACT_APP_URL?.replace(/^https?:\/\//, '') || ''
  */
 
 /**
+ * Returns a promise that resolves once all images in a container have loaded
+ *
+ * @param {HTMLElement} container
+ * @returns {Promise<undefined>}
+ */
+const waitForImagesToLoad = (container) =>
+  new Promise((resolve) => {
+    let imagesLoaded = 0
+    const images = container.querySelectorAll('img')
+
+    if (images.length === 0) {
+      resolve()
+    }
+
+    const onImageLoaded = () => {
+      imagesLoaded++
+
+      if (imagesLoaded === images.length) {
+        resolve()
+      }
+    }
+
+    images.forEach((image) => {
+      if (image.complete) {
+        onImageLoaded()
+      } else {
+        image.addEventListener('load', onImageLoaded)
+        image.addEventListener('error', onImageLoaded)
+      }
+    })
+  })
+
+/**
  * html2canvas requires that the element to be converted is on the page, so we must
  * render the answer to the DOM. Return a promise to ensure equation images have been
  * rendered before we calculate the container height.
@@ -35,11 +65,14 @@ const url = process.env.REACT_APP_URL?.replace(/^https?:\/\//, '') || ''
  * @param {Answer} answer
  * @returns {Promise<{container: HTMLElement, onComplete: () => void}>}
  */
-const renderAnswersForDownload = (answers) => {
+const renderAnswersForDownload = async (answers, withHeader) => {
   const container = document.getElementById('download-container')
+
+  answers = castArray(answers)
 
   ReactDOM.render(
     <Providers>
+      {withHeader && <PdfHeader />}
       {answers.map((answer) => (
         <div key={answer.id}>
           {!isDefaultTitle(answer.title) && (
@@ -55,18 +88,21 @@ const renderAnswersForDownload = (answers) => {
     container
   )
 
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        container,
-        onComplete: () => ReactDOM.unmountComponentAtNode(container),
-      })
-    }, 500)
-  })
+  await waitForImagesToLoad(container)
+
+  return {
+    container,
+    onComplete: () => ReactDOM.unmountComponentAtNode(container),
+  }
 }
 
-const createAnswersCanvas = async (...answers) => {
-  const { container, onComplete } = await renderAnswersForDownload(answers)
+const downloadImage = async (answer) => {
+  const { container, onComplete } = await renderAnswersForDownload(
+    answer,
+    false
+  )
+
+  await waitForImagesToLoad(container)
 
   const canvas = await html2canvas(container, {
     height: container.clientHeight,
@@ -74,48 +110,29 @@ const createAnswersCanvas = async (...answers) => {
     allowTaint: true,
   })
 
-  onComplete()
-
-  return canvas
-}
-
-const downloadImage = async (answer) => {
-  const canvas = await createAnswersCanvas(answer)
-
   saveAs(canvas.toDataURL(), `${DOWNLOAD_FILENAME}.png`)
+  onComplete()
 }
 
-const drawHeader = (doc) => {
-  const date = formatDate(Date.now())
+export const downloadPdf = async (answers) => {
+  const { container, onComplete } = await renderAnswersForDownload(
+    answers,
+    true
+  )
 
-  doc.setFontSize(10)
-  doc.addImage(logo, 'PNG', 5, 5, 50, 50 / 2.86)
-  doc.addImage(watermark, 'PNG', 176, 2, 25, 25)
-  doc.text(170, 10, date)
-  doc.text(170, 15, url)
-}
-
-const downloadPdf = async (answerCanvas) => {
-  const doc = new jsPDF()
-  const imageData = answerCanvas.toDataURL('image/png')
-  const width = Math.floor(doc.internal.pageSize.getWidth())
-  const pageHeight = Math.floor(doc.internal.pageSize.getHeight())
-  const totalHeight = (answerCanvas.height * width) / answerCanvas.width
-  const startingY = 30
-
-  drawHeader(doc)
-
-  // Split long images to download as a multi-page PDF
-  for (let imageY = startingY; imageY > -totalHeight; imageY -= pageHeight) {
-    // Add a new page if this isn't the first page
-    if (imageY !== startingY) {
-      doc.addPage()
-    }
-
-    doc.addImage(imageData, 'PNG', 0, imageY, width, totalHeight, '', 'FAST')
+  const options = {
+    margin: [16, 8],
+    filename: `${DOWNLOAD_FILENAME}.pdf`,
+    html2canvas: {
+      scale: 2,
+      allowTaint: true,
+    },
+    pagebreak: { mode: 'avoid-all' },
   }
 
-  doc.save(`${DOWNLOAD_FILENAME}.pdf`)
+  await html2pdf().set(options).from(container).save()
+
+  onComplete()
 }
 
 const downloadFile = (answer) => {
@@ -129,12 +146,6 @@ const downloadFile = (answer) => {
   saveAs(fileToSave, fileName)
 }
 
-export const combineAndDownloadPdf = async (answers) => {
-  const canvas = await createAnswersCanvas(...answers)
-
-  downloadPdf(canvas)
-}
-
 export const TYPE = {
   FILE: 'FILE',
   PDF: 'PDF',
@@ -144,17 +155,15 @@ export const TYPE = {
 export const handleDownload = async (type, answer) => {
   switch (type) {
     case TYPE.FILE:
-      downloadFile(answer)
+      await downloadFile(answer)
       break
 
     case TYPE.PDF:
-      const canvas = await createAnswersCanvas(answer)
-
-      downloadPdf(canvas)
+      await downloadPdf(answer)
       break
 
     case TYPE.IMAGE:
-      downloadImage(answer)
+      await downloadImage(answer)
       break
 
     default:

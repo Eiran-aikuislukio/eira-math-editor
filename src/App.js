@@ -16,12 +16,16 @@ const globalStyles = css`
   }
 `
 
-const DownloadContainer = styled.div`
+const DownloadWrapper = styled.div`
   position: absolute;
   z-index: -1000;
   top: 0;
   left: 0;
   width: 800px;
+`
+
+const DownloadContainer = styled.div`
+  background: white;
 `
 
 export const Providers = ({ children }) => (
@@ -34,7 +38,9 @@ export const Providers = ({ children }) => (
 const App = () => (
   <Providers>
     <Layout />
-    <DownloadContainer id="download-container" />
+    <DownloadWrapper>
+      <DownloadContainer id="download-container" />
+    </DownloadWrapper>
   </Providers>
 )
 

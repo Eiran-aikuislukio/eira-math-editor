@@ -308,7 +308,7 @@ const Editor = () => {
           aria-label={t('COPY_TO_CLIPBOARD')}
           icon={<CopyIcon />}
         />
-        <Answer ref={answerRef}></Answer>
+        <Answer ref={answerRef} />
       </AnswerWrapper>
 
       {/* Render \({}\) to inform MathJax where to render the result */}
