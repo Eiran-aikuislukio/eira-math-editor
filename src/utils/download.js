@@ -106,7 +106,7 @@ const downloadImage = async (answer) => {
 
   const canvas = await html2canvas(container, {
     height: container.clientHeight,
-    scale: 2,
+    scale: 1.4,
     allowTaint: true,
   })
 
@@ -124,7 +124,7 @@ export const downloadPdf = async (answers) => {
     margin: [16, 8],
     filename: `${DOWNLOAD_FILENAME}.pdf`,
     html2canvas: {
-      scale: 2,
+      scale: 1.4,
       allowTaint: true,
     },
     pagebreak: { mode: 'avoid-all' },
