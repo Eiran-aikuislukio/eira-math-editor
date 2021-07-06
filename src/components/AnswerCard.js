@@ -74,6 +74,7 @@ const AnswerCard = ({
       bgColor={
         isActive ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.5)'
       }
+      borderRadius={4}
       borderColor="black"
       borderStyle="solid"
       borderBottomWidth={isActive ? 3 : 0}
