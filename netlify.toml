@@ -1,6 +1,6 @@
-[build]
-    functions = "lambda"
-[[redirects]]
-    from = "/math.svg"
-    to = "/.netlify/functions/render-math-svg"
-    status = 200
+# [build]
+#     functions = "lambda"
+# [[redirects]]
+#     from = "/math.svg"
+#     to = "/.netlify/functions/render-math-svg"
+#     status = 200
