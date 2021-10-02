@@ -74,6 +74,13 @@ mathjax.config({
 exports.handler = async function (event) {
   const { latex } = event.queryStringParameters
 
+  console.log(
+    `REQUEST
+      |- ${event.headers.referer}
+      |- ${event.headers[process.env.HEADER_LOG_KEY]}
+      |- LATEX: "${latex}"`
+  )
+
   if (!latex || isTooLong(latex) || isTooDeep(latex)) {
     return formatResponse(ERROR_SVG)
   }
