@@ -1,7 +1,5 @@
 # Eira Math Editor
 
-> ### This project and documentation is a work in progress currently in alpha stages. The end goal is to create an open math formula editor that can be easily forked, themed and deployed by any school or institution.
-
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -54,9 +52,7 @@ Use client-side rendering to save on the costs of running serverless functions a
 
 ## Global store
 
-TODO
-
-##
+Answers are stored in a global `zustand` store to allow access from outside React components and are persisted to local storage. See [`src/store/answers.js`](./src/store/answers.js).
 
 ## Contributing
 
