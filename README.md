@@ -33,7 +33,11 @@ To run serverless functions locally
 
 ## Deployment
 
-TODO
+The site is deployed to Netlify, under an [open source plan](https://www.netlify.com/open-source/).
+
+Upon push or merge to `develop`, a live **deploy preview** is created via GitHub actions.
+
+Upon push or merge to `master`, the site is built and a production deployment is made automatically via Netlify.
 
 ## Server-side vs client-side rendering of formulas
 
@@ -42,7 +46,7 @@ There are two approaches to rendering LaTeX formulas, which configured in `.env`
 1. Server-side, enabled if `REACT_APP_SVG_RENDERING=server`. Images are rendered by the serverless function [`render-math-svg.js`](./lambda/render-math-svg.js), which converts LaTeX to SVG.
 2. Client-side, enabled if `REACT_APP_SVG_RENDERING=client`. Images are Base64 encoded and the entire application can be hosted as a static website without serverless functions.
 
-### Which approach should I use?
+### Which approach should I use?
 
 Use server-side rendering if there's a need to paste content from the editor to another website e.g. Moodle. Moodle and other tools may not allow Base64 encoded (client-side) images and require images to be returned from a url e.g `<img src="https://editori.example.com/math.svg?latex=xyz">`.
 
